@@ -76,7 +76,7 @@ export function Footer() {
             <div className="space-y-2 text-gray-400">
               <p>8th Floor, A 10, Shilpitha Tech Park- iSprout, Devarabisanahalli Rd, Kariyammana Agrahara, Bellandur, Bengaluru, Karnataka 560103</p>
               <p>Phone: +91 99161 93248</p>
-              <p>Email: info@lexanalytico.com</p>
+              <p>Email: info@ipprotectionindia.com</p>
               <div className="flex gap-4 mt-4">
                 <a 
                   href="https://www.instagram.com/lexanalytico_consulting/" 

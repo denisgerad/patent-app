@@ -52,7 +52,7 @@ export default function ContactPage() {
               "@type": "ProfessionalService",
               "name": "IP Protection India",
               "telephone": "+91-99161-93248",
-              "email": "info@lexanalytico.com",
+              "email": "info@ipprotectionindia.com",
               "address": {
                 "@type": "PostalAddress",
                 "streetAddress": "8th Floor, A 10, Shilpitha Tech Park- iSprout, Devarabisanahalli Rd, Kariyammana Agrahara",
@@ -202,8 +202,8 @@ export default function ContactPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 mb-4">
-                  <a href="mailto:info@lexanalytico.com" className="text-blue-600 hover:text-blue-700 font-medium">
-                    info@lexanalytico.com
+                  <a href="mailto:info@ipprotectionindia.com" className="text-blue-600 hover:text-blue-700 font-medium">
+                    info@ipprotectionindia.com
                   </a>
                 </p>
                 <p className="text-sm text-gray-500">

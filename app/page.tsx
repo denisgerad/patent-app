@@ -4416,7 +4416,7 @@ if (showQuotePage) {
                                         </div>
                                       </div>
                                       <div style='text-align:right;font-size:12px;'>
-                                        <strong>IP Protection India</strong><br/>Professional IP Services<br/>info@lexanalytico.com
+                                        <strong>IP Protection India</strong><br/>Professional IP Services<br/>info@ipprotectionindia.com
                                       </div>
                                     </div>
                                     <table style='margin-top:12px;'>

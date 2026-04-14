@@ -586,7 +586,7 @@ export default function PrivacyPolicyPage() {
                 <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
                   <h3 className="font-semibold text-yellow-900 mb-2">How to Exercise Your Rights</h3>
                   <div className="text-yellow-800 text-sm space-y-2">
-                    <p>1. <strong>Email us:</strong> info@lexanalytico.com with your request</p>
+                    <p>1. <strong>Email us:</strong> info@ipprotectionindia.com with your request</p>
                     <p>2. <strong>Include:</strong> Your full name, email address, and specific request</p>
                     <p>3. <strong>Verification:</strong> We may ask for additional information to verify your identity</p>
                     <p>4. <strong>Response time:</strong> We'll respond within 30 days (may extend to 60 days for complex requests)</p>
@@ -693,7 +693,7 @@ export default function PrivacyPolicyPage() {
                     <div className="text-blue-800 text-sm space-y-2">
                       <p className="flex items-center">
                         <Mail className="h-4 w-4 mr-2" />
-                        info@lexanalytico.com
+                        info@ipprotectionindia.com
                       </p>
                       <p className="flex items-center">
                         <Phone className="h-4 w-4 mr-2" />
