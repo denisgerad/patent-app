@@ -82,7 +82,7 @@ export function BannerCarousel({ featureFlag = process.env.NEXT_PUBLIC_ENABLE_BA
   // Navigation via dots only; arrow handlers removed
 
   return (
-    <section className="banner-section relative h-[420px] md:h-[520px] lg:h-[600px] overflow-hidden">
+    <section className="banner-section relative h-[420px] md:h-[520px] lg:h-[600px] 2xl:h-[720px] overflow-hidden">
   <div className="absolute inset-0 bg-gradient-to-br from-[#0F3B97] via-[#1549B5] to-[#1B3F92]" />
       <div className="relative h-full">
         {slides.map((slide, index) => (
@@ -93,30 +93,30 @@ export function BannerCarousel({ featureFlag = process.env.NEXT_PUBLIC_ENABLE_BA
             {/* Single background gradient only (no per-slide overlay) */}
             <div className="absolute inset-0" />
             <div className="relative h-full flex items-center">
-              <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 py-6 md:py-10">
+              <div className="relative z-10 w-full max-w-7xl 2xl:max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-12 2xl:px-20 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(520px,0.92fr)] 2xl:grid-cols-[minmax(0,1fr)_minmax(680px,0.95fr)] gap-6 md:gap-10 2xl:gap-16 py-6 md:py-10">
                 {/* Left Column */}
-                <div className="flex flex-col justify-center max-w-xl">
+                <div className="flex flex-col justify-center max-w-xl 2xl:max-w-3xl">
                   {slide.eyebrow && (
-                    <span className="inline-block text-xs md:text-sm font-medium text-blue-100 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 border border-white/15 shadow-sm w-fit mb-4 md:mb-6 tracking-wide">
+                    <span className="inline-block text-xs md:text-sm 2xl:text-base font-medium text-blue-100 bg-white/10 backdrop-blur-sm rounded-full px-3 py-1.5 md:px-4 md:py-2 2xl:px-5 2xl:py-2.5 border border-white/15 shadow-sm w-fit mb-4 md:mb-6 tracking-wide">
                       {slide.eyebrow}
                     </span>
                   )}
                   {slide.title && (
-                    <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight md:leading-[1.05] drop-shadow-lg">
+                    <h1 className="text-2xl sm:text-3xl md:text-5xl 2xl:text-6xl font-bold tracking-tight text-white leading-tight md:leading-[1.05] drop-shadow-lg">
                       {slide.title}
                     </h1>
                   )}
                   {slide.description && (
-                    <p className="mt-4 md:mt-6 text-sm sm:text-base md:text-xl text-blue-50 leading-relaxed drop-shadow-sm">
+                    <p className="mt-4 md:mt-6 2xl:mt-8 text-sm sm:text-base md:text-xl 2xl:text-2xl text-blue-50 leading-relaxed drop-shadow-sm">
                       {slide.description}
                     </p>
                   )}
-                  <div className="mt-6 md:mt-10 flex flex-wrap gap-3 md:gap-4">
+                  <div className="mt-6 md:mt-10 2xl:mt-12 flex flex-wrap gap-3 md:gap-4 2xl:gap-5">
                     {slide.primaryCta && (
                       <button
                         type="button"
                         onClick={scrollToPatentServices}
-                        className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-sm transition-colors text-sm md:text-base select-none"
+                        className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 2xl:px-8 2xl:py-4 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-sm transition-colors text-sm md:text-base 2xl:text-lg select-none"
                       >
                         {slide.primaryCta.label}
                       </button>
@@ -125,18 +125,18 @@ export function BannerCarousel({ featureFlag = process.env.NEXT_PUBLIC_ENABLE_BA
                       <button
                         type="button"
                         onClick={playExplainerVideo}
-                        className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 rounded-lg border border-white/30 text-white font-medium hover:bg-white/10 transition-colors text-sm md:text-base select-none"
+                        className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 2xl:px-8 2xl:py-4 rounded-lg border border-white/30 text-white font-medium hover:bg-white/10 transition-colors text-sm md:text-base 2xl:text-lg select-none"
                       >
                         {slide.secondaryCta.label}
                       </button>
                     )}
                   </div>
                   {slide.stats && (
-                    <div className="mt-6 md:mt-12 flex flex-wrap gap-6 md:gap-10 text-white/90">
+                    <div className="mt-6 md:mt-12 2xl:mt-16 flex flex-wrap gap-6 md:gap-10 2xl:gap-14 text-white/90">
                       {slide.stats.map((stat, i) => (
                         <div key={i} className="min-w-[95px] relative">
-                          <div className="text-base sm:text-lg md:text-xl font-semibold tracking-tight">{stat.value}</div>
-                          <div className="text-[10px] sm:text-[11px] uppercase tracking-wide text-white/70 mt-1 font-medium">{stat.label}</div>
+                          <div className="text-base sm:text-lg md:text-xl 2xl:text-2xl font-semibold tracking-tight">{stat.value}</div>
+                          <div className="text-[10px] sm:text-[11px] 2xl:text-xs uppercase tracking-wide text-white/70 mt-1 font-medium">{stat.label}</div>
                           {i < (slide.stats?.length || 0) - 1 && (
                             <span className="hidden md:block absolute top-1/2 -right-5 h-10 w-px bg-white/15 -translate-y-1/2" />
                           )}
@@ -148,7 +148,7 @@ export function BannerCarousel({ featureFlag = process.env.NEXT_PUBLIC_ENABLE_BA
                 {/* Right Column: Framed media placeholder */}
                 {!slide.hideFrame && (
                   <div className="hidden md:flex items-center justify-center">
-                    <div className="relative w-[320px] h-[210px] md:w-[420px] md:h-[280px] lg:w-[520px] lg:h-[340px] rounded-2xl bg-white/5 border border-white/20 backdrop-blur-md shadow-2xl overflow-hidden flex items-center justify-center">
+                    <div className="relative w-[320px] h-[210px] md:w-[420px] md:h-[280px] lg:w-[520px] lg:h-[340px] 2xl:w-[680px] 2xl:h-[440px] rounded-2xl bg-white/5 border border-white/20 backdrop-blur-md shadow-2xl overflow-hidden flex items-center justify-center">
                       <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/10 via-white/5 to-transparent" />
                       <div className="relative w-[84%] h-[74%] rounded-xl bg-neutral-100 border border-neutral-200 shadow-inner overflow-hidden flex items-center justify-center">
                         <Image

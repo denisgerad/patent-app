@@ -4972,11 +4972,11 @@ if (showQuotePage) {
       </div>
 
       {/* Main Content Area: Services on Left, Cart on Right */}
-  <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 md:py-8 flex flex-col lg:flex-row gap-6 md:gap-8">
+  <div className="max-w-7xl 2xl:max-w-[1680px] mx-auto px-3 sm:px-6 lg:px-8 2xl:px-12 py-6 md:py-8 2xl:py-10 flex flex-col lg:flex-row gap-6 md:gap-8 2xl:gap-10">
         {/* Left Column: Tabbed Services */}
         <div className="flex-1">
           {/* Scrollable nav styled as tabs */}
-          <div className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-6 md:mb-8" data-tour="services-grid">
+          <div className="grid w-full grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 2xl:gap-4 mb-6 md:mb-8" data-tour="services-grid">
             <button onClick={() => scrollToSection('patent-services')} className="px-3 py-2 rounded bg-blue-50 text-blue-700 hover:bg-blue-100">Patent Services</button>
             <button onClick={() => scrollToSection('trademark-services')} className="px-3 py-2 rounded bg-neutral-50 text-neutral-700 hover:bg-neutral-100">Trademark Services</button>
             <button onClick={() => scrollToSection('design-services')} className="px-3 py-2 rounded bg-neutral-50 text-neutral-700 hover:bg-neutral-100">Design Services</button>
@@ -4984,13 +4984,13 @@ if (showQuotePage) {
           </div>
 
           {/* Patent Services */}
-          <section id="patent-services" className="bg-blue-50 py-6 md:py-8 rounded-lg scroll-mt-24">
-            <div className="px-4 sm:px-6 lg:px-8">
+          <section id="patent-services" className="bg-blue-50 py-6 md:py-8 2xl:py-10 rounded-lg scroll-mt-24">
+            <div className="px-4 sm:px-6 lg:px-8 2xl:px-10">
               <div className="mb-8">
                 <h2 className="text-2xl md:text-4xl font-bold text-gray-900">Patent Services</h2>
                 <p className="text-base md:text-lg text-gray-600 max-w-3xl">Comprehensive patent services to protect your innovations and inventions.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-8">
                 {patentServices.map((service) => (
                   <Card key={service.title} className="bg-white hover:shadow-lg transition-shadow">
                     <CardContent className="p-5 md:p-7">
@@ -5018,13 +5018,13 @@ if (showQuotePage) {
 
 
           {/* Trademark Services */}
-          <section id="trademark-services" className="bg-blue-50 py-6 md:py-8 rounded-lg mt-6 md:mt-8 scroll-mt-24">
-            <div className="px-4 sm:px-6 lg:px-8">
+          <section id="trademark-services" className="bg-blue-50 py-6 md:py-8 2xl:py-10 rounded-lg mt-6 md:mt-8 scroll-mt-24">
+            <div className="px-4 sm:px-6 lg:px-8 2xl:px-10">
               <div className="mb-8">
                 <h2 className="text-2xl md:text-4xl font-bold text-gray-900">Trademark Services</h2>
                 <p className="text-base md:text-lg text-gray-600 max-w-3xl">Protect your brand identity with tailored search, filing, and monitoring solutions.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-8">
                 {trademarkServices.map((service) => (
                   <Card key={service.title} className="bg-white hover:shadow-lg transition-shadow">
                     <CardContent className="p-5 md:p-7">
@@ -5057,13 +5057,13 @@ if (showQuotePage) {
           </section>
 
           {/* Design Services (moved above Copyright) */}
-          <section id="design-services" className="bg-blue-50 py-6 md:py-8 rounded-lg mt-6 md:mt-8 scroll-mt-24">
-            <div className="px-4 sm:px-6 lg:px-8">
+          <section id="design-services" className="bg-blue-50 py-6 md:py-8 2xl:py-10 rounded-lg mt-6 md:mt-8 scroll-mt-24">
+            <div className="px-4 sm:px-6 lg:px-8 2xl:px-10">
               <div className="mb-8">
                 <h2 className="text-2xl md:text-4xl font-bold text-gray-900">Design Services</h2>
                 <p className="text-base md:text-lg text-gray-600 max-w-3xl">Protect your unique product designs with expert registration, compliance, and strategic support.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-8">
                 {designServices.map((service) => (
                   <Card key={service.title} className="bg-white hover:shadow-lg transition-shadow">
                     <CardContent className="p-5 md:p-7">
@@ -5088,13 +5088,13 @@ if (showQuotePage) {
           </section>
 
           {/* Copyright Services (moved to last) */}
-          <section id="copyright-services" className="bg-blue-50 py-6 md:py-8 rounded-lg mt-6 md:mt-8 scroll-mt-24">
-            <div className="px-4 sm:px-6 lg:px-8">
+          <section id="copyright-services" className="bg-blue-50 py-6 md:py-8 2xl:py-10 rounded-lg mt-6 md:mt-8 scroll-mt-24">
+            <div className="px-4 sm:px-6 lg:px-8 2xl:px-10">
               <div className="mb-8">
                 <h2 className="text-2xl md:text-4xl font-bold text-gray-900">Copyright Services</h2>
                 <p className="text-base md:text-lg text-gray-600 max-w-3xl">Safeguard creative works with registration, licensing, and enforcement support.</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4 md:gap-8">
                 {copyrightServices.map((service) => (
                   <Card key={service.title} className="bg-white hover:shadow-lg transition-shadow">
                     <CardContent className="p-5 md:p-7">
@@ -5122,7 +5122,7 @@ if (showQuotePage) {
         </div>
 
         {/* Right Column: Cart Section */}
-        <div className="w-full lg:w-72 bg-gray-50 border border-gray-200 rounded-lg p-4 flex-shrink-0 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] lg:overflow-y-auto">
+        <div className="w-full lg:w-80 2xl:w-96 bg-gray-50 border border-gray-200 rounded-lg p-4 2xl:p-5 flex-shrink-0 lg:sticky lg:top-24 lg:h-[calc(100vh-6rem)] lg:overflow-y-auto">
           <div className="pb-4 border-b mb-4">
             <h3 className="text-lg font-semibold text-gray-900 flex items-center">
               <Scale className="h-5 w-5 mr-2 text-blue-600" />
