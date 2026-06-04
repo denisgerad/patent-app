@@ -1,6 +1,5 @@
 "use client"
 
-import { Scale } from 'lucide-react'
 import Link from "next/link"
 import { Instagram, Linkedin } from 'lucide-react'
 
@@ -19,9 +18,14 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
-            <div className="flex items-center mb-4">
-              <Scale className="h-8 w-8 text-blue-400 mr-2" />
-              <span className="text-2xl font-bold">IP Protection India</span>
+            <div className="mb-4">
+              <img
+                src="/logo.png"
+                alt="IP Protection India"
+                width={3600}
+                height={1600}
+                className="h-auto w-[166px] max-w-full object-contain sm:w-[207px]"
+              />
             </div>
             <p className="text-gray-400">
               Your trusted partner for comprehensive intellectual property protection services.

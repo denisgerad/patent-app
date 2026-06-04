@@ -47,6 +47,14 @@ export function BannerCarousel({ featureFlag = process.env.NEXT_PUBLIC_ENABLE_BA
   const [current, setCurrent] = useState(0)
   const overrideAppliedRef = useRef(false)
 
+  const scrollToPatentServices = useCallback(() => {
+    window.dispatchEvent(new CustomEvent('nav:go-section', { detail: { id: 'patent-services' } }))
+  }, [])
+
+  const playExplainerVideo = useCallback(() => {
+    window.dispatchEvent(new CustomEvent('explainer-video:play'))
+  }, [])
+
   // Remote override (optional)
   useEffect(() => {
     if (featureFlag !== '1') return
@@ -105,22 +113,22 @@ export function BannerCarousel({ featureFlag = process.env.NEXT_PUBLIC_ENABLE_BA
                   )}
                   <div className="mt-6 md:mt-10 flex flex-wrap gap-3 md:gap-4">
                     {slide.primaryCta && (
-                      <span
-                        aria-disabled="true"
+                      <button
+                        type="button"
+                        onClick={scrollToPatentServices}
                         className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 shadow-sm transition-colors text-sm md:text-base select-none"
-                        title="Disabled"
                       >
                         {slide.primaryCta.label}
-                      </span>
+                      </button>
                     )}
                     {slide.secondaryCta && (
-                      <span
-                        aria-disabled="true"
+                      <button
+                        type="button"
+                        onClick={playExplainerVideo}
                         className="inline-flex items-center px-4 py-2 md:px-6 md:py-3 rounded-lg border border-white/30 text-white font-medium hover:bg-white/10 transition-colors text-sm md:text-base select-none"
-                        title="Disabled"
                       >
                         {slide.secondaryCta.label}
-                      </span>
+                      </button>
                     )}
                   </div>
                   {slide.stats && (

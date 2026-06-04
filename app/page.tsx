@@ -19,6 +19,7 @@ import { computeDraftingPrice as draftingPriceHelper } from '@/utils/pricing/ser
 import { usePricingPreview } from '@/hooks/usePricingPreview'
 import { bannerSlides as staticBannerSlides } from "@/constants/data"
 import { BannerCarousel } from '@/components/sections/BannerCarousel'
+import { ExplainerVideo } from '@/components/sections/ExplainerVideo'
 import { buildQuotationHtml as buildQuotationHtmlUtil, buildInvoiceWithFormsHtml } from '@/lib/quotation'
 import AuthModal from "@/components/AuthModal"; // Adjust path
 import { Footer } from "@/components/layout/Footer"
@@ -6489,6 +6490,8 @@ if (showQuotePage) {
           </div>
         </div>
       </section>*/}
+
+      <ExplainerVideo />
 
 {/* Milestone Counter (Full Width) */}
       <section id="milestones" className="py-16 bg-gray-50">

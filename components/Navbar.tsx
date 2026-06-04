@@ -85,8 +85,15 @@ export default function Navbar() {
   return (
   <nav className="flex items-center justify-between p-4 shadow-md bg-white sticky top-0 z-[200]">
       {/* Left: Logo/Brand (non-clickable) */}
-      <div className="flex items-center gap-2 select-none" aria-label="IP Protection India" role="img">
-        <span className="text-xl font-semibold text-gray-900">IP Protection India</span>
+      <div className="flex items-center select-none" aria-label="IP Protection India" role="img">
+        <img
+          src="/logo.png"
+          alt="IP Protection India"
+          width={3600}
+          height={1600}
+          className="h-auto w-[164px] shrink-0 object-contain sm:w-[187px]"
+        />
+        <span className="sr-only">IP Protection India</span>
       </div>
 
   {/* Right: Top links aligned in a row (desktop) */}
