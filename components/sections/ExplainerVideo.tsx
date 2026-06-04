@@ -46,9 +46,9 @@ export function ExplainerVideo() {
     <section id="explainer-video" className="bg-white py-12 md:py-16 scroll-mt-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">How IP Protection India Works</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Introduction to IP</h2>
           <p className="mt-3 text-base md:text-lg text-gray-600">
-            A quick walkthrough of our intellectual property filing and advisory process.
+            Get to know what form of IP protection is suitable for you and what services you may need.
           </p>
         </div>
 

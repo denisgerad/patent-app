@@ -4856,94 +4856,114 @@ if (showQuotePage) {
   {/* Hidden landing heading anchor for skip link and initial focus */}
     <h1 id="page-heading" tabIndex={-1} className="sr-only">IP Protection India – Services</h1>
 
-  {/* Header */}
-      <header className="bg-white shadow-md p-4">
-      <div className="hidden md:flex items-center space-x-6 justify-end w-full">
-        <a href="/knowledge-hub" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
-          Knowledge Hub
-        </a>
-        <button
-          onClick={() => { if (isAdmin) router.push('/admin') }}
-          disabled={!isAdmin}
-          className={`px-3 py-2 text-sm font-medium rounded-md transition-colors border ${
-            isAdmin
-              ? 'text-gray-700 hover:text-blue-600 border-transparent hover:border-blue-200'
-              : 'text-gray-400 cursor-not-allowed border-gray-200 bg-gray-50'
-          }`}
-          title={isAdmin ? (isPrimaryAdmin ? 'Primary Admin: full access' : 'Secondary Admin: limited view') : 'Admins only'}
-          aria-disabled={!isAdmin}
-        >
-          {isPrimaryAdmin ? 'Admin Dashboard' : isAdmin ? 'My Admin View' : 'Admin Dashboard'}
-        </button>
-        {/* Auth greeting (redundant Sign In button removed; use profile menu) */}
-        {isAuthenticated && displayName && (
-          <span
-            className="text-gray-700 text-sm max-w-[180px] truncate"
-            title={displayName}
-          >
-            Welcome, {displayName}
-          </span>
-        )}
-        {/* Tour Guide Button */}
-        <button
-          onClick={() => startTour('main')}
-          className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-md transition-colors shadow-sm"
-          title="Start guided tour"
-        >
-          <span className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
-            <span className="text-orange-500 text-lg">👉</span>
-          </span>
-          Tour Guide
-        </button>
-        <div className="relative">
-          <button onClick={toggleMenu} className="focus:outline-none" data-tour="login-button">
-            <UserCircleIcon className="h-8 w-8 text-gray-700 hover:text-blue-600" />
-          </button>
-   
-          {isOpen && (
-          <div className="absolute right-0 mt-2 w-56 bg-blue-50/95 backdrop-blur-sm shadow-lg rounded-lg py-2 border border-blue-100 z-50">
-            {/* Dashboard: visible but disabled when not signed in */}
-            <button
-              className={`block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100 ${!isAuthenticated ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''}`}
-              onClick={() => {
-                if (!isAuthenticated) return
-                setInitialQuoteView('orders')
-                setShowQuotePage(true)
-                setIsOpen(false)
-              }}
-              disabled={!isAuthenticated}
-              aria-disabled={!isAuthenticated}
-              title={!isAuthenticated ? 'Sign in to access dashboard' : undefined}
-            >
-              Dashboard
-            </button>
+      <header className="hidden md:block bg-white shadow-md sticky top-0 z-[200]">
+        <div className="grid min-h-[188px] grid-cols-[450px_1fr] grid-rows-[104px_84px] lg:grid-cols-[480px_1fr]">
+          <div className="row-span-2 flex items-center pl-10 select-none" aria-label="IP Protection India" role="img">
+            <img
+              src="/logo.png"
+              alt="IP Protection India"
+              width={3600}
+              height={1600}
+              className="h-[164px] w-[405px] shrink-0 object-fill lg:h-[174px] lg:w-[431px]"
+            />
+            <span className="sr-only">IP Protection India</span>
+          </div>
 
-            {/* Sign In: opens auth modal directly (no cart dependency) */}
-            <button
-              onClick={() => { if (!isAuthenticated) openSignIn(); setIsOpen(false) }}
-              className={`block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100 ${isAuthenticated ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''}`}
-              disabled={isAuthenticated}
-              aria-disabled={isAuthenticated}
-              title={isAuthenticated ? 'Already signed in' : undefined}
-            >
-              Sign In
+          <div className="flex items-center justify-end gap-8 border-b border-gray-100 px-8">
+            <button type="button" onClick={() => scrollToSection('patent-services')} className="text-gray-700 hover:text-blue-600 px-2 py-1 text-sm font-medium">
+              Patent Services
             </button>
-
-            {/* Sign Out: visible but disabled when not signed in */}
-            <button
-              onClick={() => { if (!isAuthenticated) return; handleLogout(); setIsOpen(false); }}
-              className={`block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100 ${!isAuthenticated ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''}`}
-              disabled={!isAuthenticated}
-              aria-disabled={!isAuthenticated}
-              title={!isAuthenticated ? 'Sign in to enable sign out' : undefined}
-            >
-              Sign Out
+            <button type="button" onClick={() => scrollToSection('trademark-services')} className="text-gray-700 hover:text-blue-600 px-2 py-1 text-sm font-medium">
+              Trademark Services
+            </button>
+            <button type="button" onClick={() => scrollToSection('design-services')} className="text-gray-700 hover:text-blue-600 px-2 py-1 text-sm font-medium">
+              Design Services
+            </button>
+            <button type="button" onClick={() => scrollToSection('copyright-services')} className="text-gray-700 hover:text-blue-600 px-2 py-1 text-sm font-medium">
+              Copyright Services
             </button>
           </div>
-        )}
+
+          <div className="flex items-center justify-end gap-6 px-8">
+            <a href="/knowledge-hub" className="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
+              Knowledge Hub
+            </a>
+            <button
+              onClick={() => { if (isAdmin) router.push('/admin') }}
+              disabled={!isAdmin}
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors border ${
+                isAdmin
+                  ? 'text-gray-700 hover:text-blue-600 border-transparent hover:border-blue-200'
+                  : 'text-gray-400 cursor-not-allowed border-gray-200 bg-gray-50'
+              }`}
+              title={isAdmin ? (isPrimaryAdmin ? 'Primary Admin: full access' : 'Secondary Admin: limited view') : 'Admins only'}
+              aria-disabled={!isAdmin}
+            >
+              {isPrimaryAdmin ? 'Admin Dashboard' : isAdmin ? 'My Admin View' : 'Admin Dashboard'}
+            </button>
+            {isAuthenticated && displayName && (
+              <span
+                className="text-gray-700 text-sm max-w-[180px] truncate"
+                title={displayName}
+              >
+                Welcome, {displayName}
+              </span>
+            )}
+            <button
+              onClick={() => startTour('main')}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-orange-500 hover:bg-orange-600 rounded-md transition-colors shadow-sm"
+              title="Start guided tour"
+            >
+              <span className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
+                <span className="text-orange-500 text-lg">👉</span>
+              </span>
+              Tour Guide
+            </button>
+            <div className="relative">
+              <button onClick={toggleMenu} className="focus:outline-none" data-tour="login-button">
+                <UserCircleIcon className="h-8 w-8 text-gray-700 hover:text-blue-600" />
+              </button>
+     
+              {isOpen && (
+              <div className="absolute right-0 mt-2 w-56 bg-blue-50/95 backdrop-blur-sm shadow-lg rounded-lg py-2 border border-blue-100 z-50">
+                <button
+                  className={`block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100 ${!isAuthenticated ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''}`}
+                  onClick={() => {
+                    if (!isAuthenticated) return
+                    setInitialQuoteView('orders')
+                    setShowQuotePage(true)
+                    setIsOpen(false)
+                  }}
+                  disabled={!isAuthenticated}
+                  aria-disabled={!isAuthenticated}
+                  title={!isAuthenticated ? 'Sign in to access dashboard' : undefined}
+                >
+                  Dashboard
+                </button>
+                <button
+                  onClick={() => { if (!isAuthenticated) openSignIn(); setIsOpen(false) }}
+                  className={`block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100 ${isAuthenticated ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''}`}
+                  disabled={isAuthenticated}
+                  aria-disabled={isAuthenticated}
+                  title={isAuthenticated ? 'Already signed in' : undefined}
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => { if (!isAuthenticated) return; handleLogout(); setIsOpen(false); }}
+                  className={`block w-full text-left px-4 py-2 text-gray-700 hover:bg-blue-100 ${!isAuthenticated ? 'opacity-50 cursor-not-allowed hover:bg-transparent' : ''}`}
+                  disabled={!isAuthenticated}
+                  aria-disabled={!isAuthenticated}
+                  title={!isAuthenticated ? 'Sign in to enable sign out' : undefined}
+                >
+                  Sign Out
+                </button>
+              </div>
+            )}
+            </div>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
 
    
 

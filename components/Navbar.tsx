@@ -60,6 +60,7 @@ export default function Navbar() {
   // Use Next's pathname to reliably detect current route (SSR-safe)
   const pathname = usePathname() || '/'
   const router = useRouter()
+  const isHomePage = pathname === '/'
   const goSection = (id: string) => {
     try {
       // Treat only '/' as the main landing page. If already there, dispatch
@@ -83,7 +84,7 @@ export default function Navbar() {
 
   // duplicate declaration removed (mobileOpen is declared at top of component)
   return (
-  <nav className="flex items-center justify-between p-4 shadow-md bg-white sticky top-0 z-[200]">
+  <nav className={`${isHomePage ? 'md:hidden ' : ''}flex items-center justify-between bg-white p-4 shadow-md sticky top-0 z-[200] md:min-h-[188px] md:px-10 md:py-0`}>
       {/* Left: Logo/Brand (non-clickable) */}
       <div className="flex items-center select-none" aria-label="IP Protection India" role="img">
         <img
@@ -91,7 +92,7 @@ export default function Navbar() {
           alt="IP Protection India"
           width={3600}
           height={1600}
-          className="h-auto w-[164px] shrink-0 object-contain sm:w-[187px]"
+          className="h-auto w-[197px] shrink-0 object-contain sm:w-[224px] md:h-[164px] md:w-[405px] md:object-fill lg:h-[174px] lg:w-[431px]"
         />
         <span className="sr-only">IP Protection India</span>
       </div>
