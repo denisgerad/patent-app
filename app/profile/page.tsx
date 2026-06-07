@@ -592,7 +592,7 @@ function ProfilePageInner() {
         return
       }
       const email = data.session?.user?.email ?? null
-      if (!active) return
+      if (!active) { setLoading(false); return }
       setSessionEmail(email)
 
       const userId = data.session?.user?.id ?? null
@@ -642,7 +642,11 @@ function ProfilePageInner() {
       setLoading(false)
     }
 
-    init()
+    init().catch((e) => {
+      console.error('[profile] init failed', e)
+      setAuthChecked(true)
+      setLoading(false)
+    })
     return () => {
       active = false
     }
