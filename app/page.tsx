@@ -4092,30 +4092,7 @@ if (showQuotePage) {
         showThankYou={showCheckoutThankYou}
         checkoutPayment={checkoutPayment}
         checkoutOrders={checkoutOrders}
-        onCloseThankYou={() => {
-          document.body.style.overflow = ''
-          document.documentElement.style.overflow = ''
-          document.body.style.pointerEvents = ''
-          document.documentElement.style.pointerEvents = ''
-          void document.body.offsetHeight
-          requestAnimationFrame(() => {
-            document.body.style.overflow = ''
-            document.documentElement.style.overflow = ''
-            document.body.style.pointerEvents = ''
-            document.documentElement.style.pointerEvents = ''
-            void document.body.offsetHeight
-          })
-          setTimeout(() => {
-            document.body.style.overflow = ''
-            document.documentElement.style.overflow = ''
-            document.body.style.pointerEvents = ''
-            document.documentElement.style.pointerEvents = ''
-            void document.body.offsetHeight
-            try { window.dispatchEvent(new Event('screen:ready')) } catch {}
-            try { window.dispatchEvent(new Event('resize')) } catch {}
-          }, 0)
-          setShowCheckoutThankYou(false)
-        }}
+        onCloseThankYou={() => setShowCheckoutThankYou(false)}
         onProceedSingle={openFormEmbedded}
         onProceedMultiple={(orders) => { if (orders && orders.length > 0) openMultipleFormsEmbedded(orders) }}
         onSignInAgain={() => setShowAuthModal(true)}

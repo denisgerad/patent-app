@@ -48,82 +48,18 @@ const CheckoutModal = ({
     setShowTour(true)
   }
 
-  // Prevent body scroll when modal is open and restore when closed
+  // Lock body scroll when modal is open; restore on close
   useEffect(() => {
-    if (showCheckoutThankYou) {
-      // Ensure any Razorpay payment overflow locks are cleared
-      try { document.body.classList.remove('razorpay-payment-active') } catch {}
-      // Save current overflow state
-      const previousBodyOverflow = document.body.style.overflow
-      const previousHtmlOverflow = document.documentElement.style.overflow
-      document.body.style.overflow = 'hidden'
-      document.documentElement.style.overflow = 'hidden'
-      
-      return () => {
-        // Force restore overflow and pointer-events when modal closes - apply to both body and html
-        try { document.body.classList.remove('razorpay-payment-active') } catch {}
-        document.body.style.overflow = ''
-        document.documentElement.style.overflow = ''
-        document.body.style.pointerEvents = ''
-        document.documentElement.style.pointerEvents = ''
-        // Force reflow by reading offsetHeight
-        void document.body.offsetHeight
-        
-        // Use multiple cleanup attempts to ensure it works
-        requestAnimationFrame(() => {
-          document.body.style.overflow = ''
-          document.documentElement.style.overflow = ''
-          document.body.style.pointerEvents = ''
-          document.documentElement.style.pointerEvents = ''
-          void document.body.offsetHeight
-        })
-        setTimeout(() => {
-          document.body.style.overflow = ''
-          document.documentElement.style.overflow = ''
-          document.body.style.pointerEvents = ''
-          document.documentElement.style.pointerEvents = ''
-          void document.body.offsetHeight
-          try { window.dispatchEvent(new Event('screen:ready')) } catch {}
-          try { window.dispatchEvent(new Event('resize')) } catch {}
-        }, 0)
-        setTimeout(() => {
-          document.body.style.overflow = ''
-          document.documentElement.style.overflow = ''
-          document.body.style.pointerEvents = ''
-          document.documentElement.style.pointerEvents = ''
-          void document.body.offsetHeight
-        }, 100)
-        setTimeout(() => {
-          document.body.style.overflow = ''
-          document.documentElement.style.overflow = ''
-          document.body.style.pointerEvents = ''
-          document.documentElement.style.pointerEvents = ''
-          void document.body.offsetHeight
-        }, 200)
-      }
-    }
-  }, [showCheckoutThankYou])
-
-  // Dispatch screen:ready when modal opens to clear any blur overlay from tab-in
-  useEffect(() => {
-    if (showCheckoutThankYou) {
-      // Small delay to ensure modal is rendered
-      const timer = setTimeout(() => {
-        try { window.dispatchEvent(new Event('screen:ready')) } catch {}
-      }, 100)
-      return () => clearTimeout(timer)
+    if (!showCheckoutThankYou) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prev
     }
   }, [showCheckoutThankYou])
 
   // Pre-resolve application type(s) for display & debug
   const resolvedTypes: string[] = (checkoutOrders || []).map(o => resolveFormTypeFromOrderLike(o))
-  if (typeof window !== 'undefined') {
-    try {
-      console.debug('[thankyou-modal] payment', checkoutPayment)
-      console.debug('[thankyou-modal] orders raw', checkoutOrders)
-      console.debug('[thankyou-modal] resolved form types', resolvedTypes)
-    } catch {}
-  }
 
   const openFormForOrder = (o: any) => {
     try {
@@ -132,21 +68,6 @@ const CheckoutModal = ({
       const pk = o?.service_pricing_key ? String(o.service_pricing_key) : ""
       const url = `${base}/forms?${pk ? `pricing_key=${encodeURIComponent(pk)}&` : ""}type=${encodeURIComponent(type)}&order_id=${encodeURIComponent(o.id)}`
       window.open(url, "_blank")
-      // Force immediate cleanup on both body and html
-      document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
-      document.body.style.pointerEvents = ''
-      document.documentElement.style.pointerEvents = ''
-      void document.body.offsetHeight
-      requestAnimationFrame(() => {
-        document.body.style.overflow = ''
-        document.documentElement.style.overflow = ''
-        document.body.style.pointerEvents = ''
-        document.documentElement.style.pointerEvents = ''
-        void document.body.offsetHeight
-        try { window.dispatchEvent(new Event('screen:ready')) } catch {}
-        try { window.dispatchEvent(new Event('resize')) } catch {}
-      })
       onClose()
     } catch (e) {
       console.error("Open form error", e)
@@ -174,21 +95,6 @@ const CheckoutModal = ({
         const url = urls[i]
         try { w.location.href = url } catch { w.location.replace(url) }
       })
-      // Force immediate cleanup on both body and html
-      document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
-      document.body.style.pointerEvents = ''
-      document.documentElement.style.pointerEvents = ''
-      void document.body.offsetHeight
-      requestAnimationFrame(() => {
-        document.body.style.overflow = ''
-        document.documentElement.style.overflow = ''
-        document.body.style.pointerEvents = ''
-        document.documentElement.style.pointerEvents = ''
-        void document.body.offsetHeight
-        try { window.dispatchEvent(new Event('screen:ready')) } catch {}
-        try { window.dispatchEvent(new Event('resize')) } catch {}
-      })
       onClose()
     } catch (e) {
       console.error("Open all forms error", e)
@@ -204,21 +110,6 @@ const CheckoutModal = ({
       if (!ids.length) return
       const url = `${base}/forms?order_ids=${ids.join(',')}`
       window.open(url, '_blank')
-      // Force immediate cleanup on both body and html
-      document.body.style.overflow = ''
-      document.documentElement.style.overflow = ''
-      document.body.style.pointerEvents = ''
-      document.documentElement.style.pointerEvents = ''
-      void document.body.offsetHeight
-      requestAnimationFrame(() => {
-        document.body.style.overflow = ''
-        document.documentElement.style.overflow = ''
-        document.body.style.pointerEvents = ''
-        document.documentElement.style.pointerEvents = ''
-        void document.body.offsetHeight
-        try { window.dispatchEvent(new Event('screen:ready')) } catch {}
-        try { window.dispatchEvent(new Event('resize')) } catch {}
-      })
       onClose()
     } catch (e) {
       console.error('Open stacked forms error', e)
