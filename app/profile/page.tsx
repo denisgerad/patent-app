@@ -648,29 +648,27 @@ function ProfilePageInner() {
     }
   }, [])
 
-  // Signal FocusProvider that the screen is ready to hide the restore overlay
+  // Keep auth state in sync. Also clears loading so a tab-in auth event
+  // never leaves the profile page stuck on "Loading profile...".
   useEffect(() => {
-    if (!loading) {
-      try { window.dispatchEvent(new Event('screen:ready')) } catch {}
-    }
-  }, [loading])
-
-  // Keep auth state in sync while this page is mounted. This prevents transient
-  // logout-like behavior when the auth session changes or during client-side
-  // navigation; Navbar also listens but having a local listener here makes the
-  // page resilient and ensures dependent state (sessionEmail/userId) updates.
-  useEffect(() => {
-  const { data: listener } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
       const email = session?.user?.email ?? null
       const id = session?.user?.id ?? null
-      console.debug('ProfilePage onAuthStateChange', { event: _event, email, id })
       setSessionEmail(email)
       setUserId(id)
       setAuthChecked(true)
+      setLoading(false)
     })
 
+    // Safety net: if auth never resolves (e.g. network hiccup), unblock UI after 5s
+    const safety = setTimeout(() => {
+      setAuthChecked(true)
+      setLoading(false)
+    }, 5000)
+
     return () => {
-      try { listener.subscription.unsubscribe() } catch (e) { /* ignore */ }
+      try { listener.subscription.unsubscribe() } catch {}
+      clearTimeout(safety)
     }
   }, [])
 
