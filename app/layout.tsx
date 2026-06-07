@@ -2,11 +2,7 @@ import type { Metadata, Viewport } from "next";
 import React from 'react'
 import Link from 'next/link'
 import Navbar from "@/components/Navbar"; // navbar component
-import RefreshAppButton from "@/components/RefreshAppButton";
 import AutoLogout from '@/components/AutoLogout'
-import PointerEventsReset from "@/components/PointerEventsReset";
-import OverlayInspector from "@/components/OverlayInspector";
-import FocusProvider from '@/components/FocusProvider'
 import { Footer } from '@/components/layout/Footer'
 import { Analytics } from "@vercel/analytics/react"
 import { GoogleAnalytics } from '@next/third-parties/google'
@@ -244,8 +240,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <Navbar />
         <AutoLogout />
-        <PointerEventsReset />
-        <OverlayInspector />
 
         <a href="#page-heading" className="sr-only focus:not-sr-only" style={{position:'absolute',left:0,top:0,zIndex:1000}}>
           Skip to content
@@ -253,13 +247,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         { /* Removed legacy sub-navigation (Main / Orders) below brand header */ }
 
-        <FocusProvider>
-          <main role="main" style={{minHeight:'60vh',padding:0}}>
-            {children}
-          </main>
-        </FocusProvider>
+        <main role="main" style={{minHeight:'60vh',padding:0}}>
+          {children}
+        </main>
 
-        <RefreshAppButton />
         <Footer />
         <Analytics />
         <GoogleAnalytics gaId="G-XXXXXXXXXX" />
