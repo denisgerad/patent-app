@@ -1,10 +1,12 @@
 "use client"
 
 import React, { Suspense, useEffect, useState } from "react"
-import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "../../lib/supabase"
+import { useAuth } from '@/hooks/useAuth'
+import { useProfile } from '@/hooks/useProfile'
+import { useOrders } from '@/hooks/useOrders'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -62,22 +64,40 @@ interface Profile {
 function ProfilePageInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [loading, setLoading] = useState(true)
-  const [sessionEmail, setSessionEmail] = useState<string | null>(null)
-  const [profile, setProfile] = useState<Profile | null>(null)
-  const [authChecked, setAuthChecked] = useState(false)
-  const [userId, setUserId] = useState<string | null>(null)
+  const {
+    loading,
+    authChecked,
+    user,
+    userId,
+    email: sessionEmail,
+    signOut: authSignOut,
+  } = useAuth()
+
+  const {
+    profile,
+    saving,
+    save: saveProfile,
+    refresh: refreshProfile,
+  } = useProfile(userId, sessionEmail ?? null, user)
+
+  const {
+    orders: userOrders,
+    loading: loadingUserOrders,
+    statusMap: orderStatuses,
+    refresh: refreshOrders,
+  } = useOrders()
   const [editProfile, setEditProfile] = useState<Profile>({} as Profile)
-  const [saving, setSaving] = useState(false)
+
+  // Populate edit form when profile loads from hook
+  useEffect(() => {
+    if (profile) setEditProfile(profile as Profile)
+  }, [profile])
   const [expandedOrderIds, setExpandedOrderIds] = useState<Record<string, boolean>>({})
-  const [userOrders, setUserOrders] = useState<any[]>([])
-  const [loadingUserOrders, setLoadingUserOrders] = useState(false)
   const [searchOrders, setSearchOrders] = useState<string>('')
   const [sortOrders, setSortOrders] = useState<string>('date_desc')
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const [currentTab, setCurrentTab] = useState<string>('orders')
   const [highlightPaymentId, setHighlightPaymentId] = useState<string | null>(null)
-  const [orderStatuses, setOrderStatuses] = useState<Record<string, string>>({})
   const [expandedPayments, setExpandedPayments] = useState<Record<string, boolean>>({})
   // Thank You modal state
   const [showThankYou, setShowThankYou] = useState(false)
@@ -221,210 +241,6 @@ function ProfilePageInner() {
     return labels[k] ?? k
   }
 
-  const loadUserOrders = async () => {
-    setLoadingUserOrders(true)
-    try {
-      const userRes = await supabase.auth.getUser()
-      const user = (userRes && (userRes as any).data) ? (userRes as any).data.user : null
-      if (!user) return
-      const { data, error } = await supabase
-        .from('orders')
-        .select('id, created_at, service_id, category_id, payment_id, type')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (error) {
-        console.error('Failed to load user orders', error)
-      }
-
-      const ordersRaw = (data as any) ?? []
-      const serviceIds = Array.from(new Set(ordersRaw.map((o: any) => o.service_id).filter(Boolean)))
-      const categoryIds = Array.from(new Set(ordersRaw.map((o: any) => o.category_id).filter(Boolean)))
-      const paymentIds = Array.from(new Set(ordersRaw.map((o: any) => o.payment_id).filter(Boolean)))
-
-      const [servicesRes, categoriesRes, paymentsRes, pricingRes] = await Promise.all([
-        serviceIds.length ? supabase.from('services').select('id, name').in('id', serviceIds) : Promise.resolve({ data: [], error: null }),
-        categoryIds.length ? supabase.from('categories').select('id, name').in('id', categoryIds) : Promise.resolve({ data: [], error: null }),
-        paymentIds.length ? supabase.from('payments').select('id, razorpay_payment_id, total_amount, payment_status, payment_date, service_id, type').in('id', paymentIds) : Promise.resolve({ data: [], error: null }),
-        serviceIds.length ? supabase.from('service_pricing_rules').select('service_id, key').in('service_id', serviceIds) : Promise.resolve({ data: [], error: null }),
-      ])
-
-      const servicesMap = new Map((servicesRes?.data ?? []).map((s: any) => [s.id, s]))
-      const categoriesMap = new Map((categoriesRes?.data ?? []).map((c: any) => [c.id, c]))
-      const paymentsMap = new Map((paymentsRes?.data ?? []).map((p: any) => [p.id, p]))
-      const pricingMap = new Map((pricingRes?.data ?? []).reduce((acc: any[], r: any) => {
-        if (!r) return acc
-        acc.push([r.service_id, r.key])
-        return acc
-      }, []))
-
-      const merged = ordersRaw.map((o: any) => ({
-        ...o,
-        services: servicesMap.get(o.service_id) ?? null,
-        categories: categoriesMap.get(o.category_id) ?? null,
-        payments: paymentsMap.get(o.payment_id) ?? null,
-        service_pricing_key: pricingMap.get(o.service_id) ?? null,
-      }))
-
-      setUserOrders(merged)
-
-      // form statuses
-      try {
-        const orderIds = merged.map((m: any) => m.id).filter(Boolean)
-        if (orderIds.length > 0) {
-          const { data: fr } = await supabase
-            .from('form_responses')
-            .select('order_id, form_type, completed')
-            .in('order_id', orderIds)
-          const map: Record<string, string> = {}
-          for (const row of (fr as any[]) ?? []) {
-            const oid = row.order_id
-            const comp = !!row.completed
-            const current = map[oid]
-            const candidate = comp ? 'Completed' : 'Draft'
-            if (!current || (current === 'Draft' && candidate === 'Completed')) {
-              map[oid] = candidate
-            }
-          }
-          setOrderStatuses(map)
-        } else {
-          setOrderStatuses({})
-        }
-      } catch (e) {
-        console.error('Compute form statuses error', e)
-      }
-
-      // Redirect with payment_id path
-      if (highlightPaymentId) {
-        try {
-          // Check if already acknowledged for this payment
-          if (hasAcknowledgedThankYou(highlightPaymentId)) {
-            // Already acknowledged: ensure URL is clean and do not open
-            cleanupPaymentQuery()
-          } else {
-            let matched = (merged as any[]).filter((r) => {
-              const pay = (r.payments as any)
-              if (!pay) return false
-              return String(pay.razorpay_payment_id || pay.id || '').toLowerCase() === String(highlightPaymentId).toLowerCase()
-            })
-
-            if (!matched || matched.length === 0) {
-              // resolve payment directly
-              const userRes2 = await supabase.auth.getUser()
-              const user2 = (userRes2 && (userRes2 as any).data) ? (userRes2 as any).data.user : null
-              if (user2) {
-                const { data: payByRz } = await supabase
-                  .from('payments')
-                  .select('id, razorpay_payment_id, total_amount, payment_status, payment_date, type')
-                  .eq('user_id', user2.id)
-                  .eq('razorpay_payment_id', highlightPaymentId)
-                  .maybeSingle()
-                let resolvedPayment: any | null = null
-                if (payByRz) {
-                  resolvedPayment = payByRz
-                } else {
-                  const maybeId = Number(highlightPaymentId)
-                  if (!Number.isNaN(maybeId)) {
-                    const { data: payById } = await supabase
-                      .from('payments')
-                      .select('id, razorpay_payment_id, total_amount, payment_status, payment_date, type')
-                      .eq('user_id', user2.id)
-                      .eq('id', maybeId)
-                      .maybeSingle()
-                    if (payById) resolvedPayment = payById
-                  }
-                }
-                if (resolvedPayment) {
-                  setThankYouPayment(resolvedPayment)
-                  setActiveThankYouPid(resolvedPayment.razorpay_payment_id || resolvedPayment.id || null)
-                  const rowsForPayment = (merged as any[]).filter((r) => String(r.payment_id) === String(resolvedPayment.id))
-                  setThankYouOrders(rowsForPayment)
-                  if (rowsForPayment.length > 0) {
-                    setSelectedOrderId(rowsForPayment[0].id)
-                    setExpandedPayments((p) => ({ ...p, [String(resolvedPayment.id)]: true }))
-                  }
-                  setShowThankYou(true)
-                  if (!hasShownThankYou) setHasShownThankYou(true)
-                }
-              }
-            }
-
-            if (matched && matched.length > 0) {
-              setSelectedOrderId(matched[0].id)
-              const pid = matched[0]?.payments?.razorpay_payment_id || matched[0]?.payments?.id || null
-              if (pid) {
-                setActiveThankYouPid(pid)
-              }
-              const pidKey = matched[0]?.payment_id ? String(matched[0].payment_id) : null
-              if (pidKey) setExpandedPayments((p) => ({ ...p, [pidKey]: true }))
-              setTimeout(() => {
-                const el = document.querySelector(`[data-order-id="${matched[0].id}"]`)
-                if (el && (el as HTMLElement).scrollIntoView) (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'center' })
-              }, 150)
-              if (!hasShownThankYou) {
-                const samePay = (merged as any[]).filter((r) => {
-                  const pay = (r.payments as any)
-                  if (!pay) return false
-                  return String(pay.razorpay_payment_id || pay.id || '').toLowerCase() === String(highlightPaymentId).toLowerCase()
-                })
-                setThankYouOrders(samePay)
-                setThankYouPayment((samePay[0] as any)?.payments ?? null)
-                const apid = (samePay[0] as any)?.payments?.razorpay_payment_id || (samePay[0] as any)?.payments?.id || null
-                if (apid) setActiveThankYouPid(apid)
-                setShowThankYou(true)
-                setHasShownThankYou(true)
-              }
-            }
-          }
-        } catch (e) {
-          console.error('Auto-select orders error', e)
-        }
-      }
-
-      // Fallback: latest payment group when no payment_id in URL
-      if (!highlightPaymentId && merged && Array.isArray(merged) && merged.length > 0 && !hasShownThankYou) {
-        try {
-          const groupsMap = new Map<string, any[]>()
-          for (const r of merged as any[]) {
-            if (!r || !r.payment_id) continue
-            const key = String(r.payment_id)
-            if (!groupsMap.has(key)) groupsMap.set(key, [])
-            groupsMap.get(key)!.push(r)
-          }
-          const groups = Array.from(groupsMap.entries()).map(([key, rows]) => {
-            const pay = rows[0]?.payments ?? null
-            const dt = pay?.payment_date ?? rows[0]?.created_at ?? null
-            const ts = dt ? new Date(dt).getTime() : 0
-            return { key, rows, payment: pay, ts }
-          }).filter(g => !!g.payment)
-
-          if (groups.length > 0) {
-            groups.sort((a,b) => b.ts - a.ts)
-            const latest = groups[0]
-            const latestPid = latest.payment?.razorpay_payment_id || latest.payment?.id || null
-            // Only open if this specific payment hasn't been acknowledged
-            if (latestPid && !hasAcknowledgedThankYou(latestPid)) {
-              setThankYouOrders(latest.rows)
-              setThankYouPayment(latest.payment)
-              setActiveThankYouPid(latestPid)
-              if (latest.rows[0]) {
-                setSelectedOrderId(latest.rows[0].id)
-                setExpandedPayments((p) => ({ ...p, [String(latest.rows[0].payment_id)]: true }))
-              }
-              setShowThankYou(true)
-              setHasShownThankYou(true)
-            }
-          }
-        } catch (e) {
-          console.warn('Failed to resolve latest payment for popup', e)
-        }
-      }
-    } catch (e) {
-      console.error('Exception loading user orders', e)
-    } finally {
-      setLoadingUserOrders(false)
-    }
-  }
 
   const downloadSelected = () => {
     const first = userOrders.find(o => o.id === selectedOrderId)
@@ -506,7 +322,7 @@ function ProfilePageInner() {
 
   useEffect(() => {
     if (currentTab === 'orders') {
-      loadUserOrders()
+      refreshOrders()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTab])
@@ -529,7 +345,7 @@ function ProfilePageInner() {
   useEffect(() => {
     if (currentTab !== 'orders') return
     if (loadingUserOrders) return
-    loadUserOrders()
+    refreshOrders()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [highlightPaymentId, authChecked])
   const orders = [
@@ -581,107 +397,13 @@ function ProfilePageInner() {
     },
   ] as const
 
-  useEffect(() => {
-    let active = true
-    async function init() {
-      const { data, error } = await supabase.auth.getSession()
-      if (error) {
-        console.error("Error getting session:", error.message)
-        setAuthChecked(true)
-        setLoading(false)
-        return
-      }
-      const email = data.session?.user?.email ?? null
-      if (!active) { setLoading(false); return }
-      setSessionEmail(email)
-
-      const userId = data.session?.user?.id ?? null
-      setUserId(userId)
-
-      if (email && userId) {
-        // 1) Try fetch by id
-        let prof: Profile | null = null
-        const { data: byId, error: errById } = await supabase
-          .from("users")
-          .select("id, email, first_name, last_name, company, phone, address, city, state, country")
-          .eq("id", userId)
-          .maybeSingle()
-
-        if (errById) {
-          console.error("Failed to fetch profile by id:", errById.message)
-        } else if (byId) {
-          prof = byId
-        }
-
-        // 2) Fallback to fetch by email if nothing by id
-        if (!prof) {
-          const { data: byEmail, error: errByEmail } = await supabase
-            .from("users")
-            .select("id, email, first_name, last_name, company, phone, address, city, state, country")
-            .eq("email", email)
-            .maybeSingle()
-          if (errByEmail) {
-            console.error("Failed to fetch profile by email:", errByEmail.message)
-          } else if (byEmail) {
-            prof = byEmail
-          }
-        }
-
-        if (prof) {
-          setProfile(prof)
-          setEditProfile(prof)
-        } else {
-          // If no row exists, initialize with session email
-          const initial = { email } as Profile
-          setProfile(initial)
-          setEditProfile(initial)
-        }
-      }
-
-      setAuthChecked(true)
-      setLoading(false)
-    }
-
-    init().catch((e) => {
-      console.error('[profile] init failed', e)
-      setAuthChecked(true)
-      setLoading(false)
-    })
-    return () => {
-      active = false
-    }
-  }, [])
-
-  // Keep auth state in sync. Also clears loading so a tab-in auth event
-  // never leaves the profile page stuck on "Loading profile...".
-  useEffect(() => {
-    const { data: listener } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, session: Session | null) => {
-      const email = session?.user?.email ?? null
-      const id = session?.user?.id ?? null
-      setSessionEmail(email)
-      setUserId(id)
-      setAuthChecked(true)
-      setLoading(false)
-    })
-
-    // Safety net: if auth never resolves (e.g. network hiccup), unblock UI after 5s
-    const safety = setTimeout(() => {
-      setAuthChecked(true)
-      setLoading(false)
-    }, 5000)
-
-    return () => {
-      try { listener.subscription.unsubscribe() } catch {}
-      clearTimeout(safety)
-    }
-  }, [])
 
   const displayName = profile
     ? [profile.first_name, profile.last_name].filter(Boolean).join(" ") || "Your Name"
     : "Your Name"
 
   async function handleSignOut() {
-    await supabase.auth.signOut()
+    await authSignOut()
     router.push("/")
   }
     async function handleSaveProfile() {
@@ -689,53 +411,17 @@ function ProfilePageInner() {
       alert("You must be signed in to save your profile.")
       return
     }
-    try {
-      setSaving(true)
-      const payload = {
-        id: userId,
-        email: sessionEmail,
-        first_name: editProfile.first_name || null,
-        last_name: editProfile.last_name || null,
-        company: editProfile.company || null,
-        phone: editProfile.phone || null,
-        address: editProfile.address || null,
-        city: editProfile.city || null,
-        state: editProfile.state || null,
-        country: editProfile.country || null,
-      }
-
-      // Debug: Log the payload being sent
-      console.log('🔍 Profile save payload (profile page):', payload)
-      console.log('🔍 Company field value:', payload.company)
-      console.log('🔍 Edit profile state:', editProfile)
-
-      // Single upsert keyed by authenticated user's id ensures we either
-      // create or update the correct row and avoids multi-row updates.
-      const { data, error } = await supabase
-        .from("users")
-        .upsert(payload, { onConflict: "id" })
-        .select(
-          "id, email, first_name, last_name, company, phone, address, city, state, country"
-        )
-        .single()
-
-      // Debug: Log the response from database
-      console.log('🔍 Database response (profile page):', data)
-      console.log('🔍 Database error:', error)
-      console.log('🔍 Returned company field:', data?.company)
-
-      if (error) {
-        console.error("Failed to save profile:", error.message)
-        alert(`Failed to save profile: ${error.message}`)
-        return
-      }
-
-      // Update local state with the saved values
-      setProfile(data)
-      setEditProfile(data)
-    } finally {
-      setSaving(false)
-    }
+    const ok = await saveProfile({
+      first_name: editProfile.first_name || null,
+      last_name: editProfile.last_name || null,
+      company: editProfile.company || null,
+      phone: editProfile.phone || null,
+      address: editProfile.address || null,
+      city: editProfile.city || null,
+      state: editProfile.state || null,
+      country: editProfile.country || null,
+    })
+    if (!ok) alert("Failed to save profile. Please try again.")
   }
 
   return (
@@ -1018,11 +704,8 @@ function ProfilePageInner() {
                                       const isOpen = !!expandedPayments[g.key]
                                       const uniqueCats = Array.from(new Set(g.rows.map((r:any) => (r.categories as any)?.name).filter(Boolean)))
                                       const aggStatus = (() => {
-                                        // Completed if any completed; else Draft if any draft; else Not Started
-                                        const statuses = g.rows.map((r:any) => orderStatuses[r.id] ?? 'Not Started')
-                                        if (statuses.includes('Completed')) return 'Completed'
-                                        if (statuses.includes('Draft')) return 'Draft'
-                                        return 'Not Started'
+                                        const { aggregateGroupStatus } = require('@/services/statusService')
+                                        return aggregateGroupStatus(g.rows)
                                       })()
                                       return (
                                         <React.Fragment key={g.key}>
